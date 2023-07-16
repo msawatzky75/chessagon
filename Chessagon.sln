@@ -1,0 +1,27 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chessagon", "Chessagon.csproj", "{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chessagon.Common", "Chessagon.Common\Chessagon.Common.csproj", "{67212A99-3C0C-43DC-A73B-72CA428B62C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{9A7A80C1-DDA7-4F2E-B9F0-22198B56576B}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal

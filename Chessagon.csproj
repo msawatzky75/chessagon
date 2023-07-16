@@ -1,0 +1,20 @@
+<Project Sdk="Godot.NET.Sdk/4.1.0">
+  <PropertyGroup>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Chessagon.Server\Program.cs">
+      <Link>ChessagonServer\Program.cs</Link>
+    </Compile>
+    <Compile Remove="Chessagon.Common\**" />
+    <Compile Remove="Chessagon.Server\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Chessagon.Common\**" />
+    <EmbeddedResource Remove="Chessagon.Server\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Chessagon.Common\Chessagon.Common.csproj" />
+  </ItemGroup>
+</Project>

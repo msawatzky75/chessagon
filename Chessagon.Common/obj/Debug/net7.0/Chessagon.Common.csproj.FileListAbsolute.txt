@@ -1,0 +1,12 @@
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/bin/Debug/net7.0/Chessagon.Common.deps.json
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/bin/Debug/net7.0/Chessagon.Common.dll
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/bin/Debug/net7.0/Chessagon.Common.pdb
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.csproj.AssemblyReference.cache
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.GeneratedMSBuildEditorConfig.editorconfig
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.AssemblyInfoInputs.cache
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.AssemblyInfo.cs
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.csproj.CoreCompileInputs.cache
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.dll
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/refint/Chessagon.Common.dll
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/Chessagon.Common.pdb
+/home/matthew/documents/projects/Chessagon/Chessagon.Common/obj/Debug/net7.0/ref/Chessagon.Common.dll
