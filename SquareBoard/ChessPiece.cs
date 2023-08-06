@@ -14,20 +14,21 @@ public partial class ChessPiece : Node2D
 		}
 	}
 
-	private int _index = -1;
+	public float Width => Sprite.Texture.GetWidth() * Sprite.Scale.X;
+	public float Height => Sprite.Texture.GetHeight() * Sprite.Scale.Y;
 
-	public int Index => _index;
+	public int Index { get; private set; } = -1;
 
 	public void MoveTo(int index)
 	{
-		if (_index == index) throw new Exception("Cannot move to same position");
-		_index = index;
+		if (Index == index) throw new Exception("Cannot move to same position");
+		Index = index;
 
 		if (Sprite is null) return;
 		Position = new Vector2()
 		{
-			X = (Sprite.Texture.GetWidth() * Sprite.Scale.X) * (index % 8),
-			Y = (Sprite.Texture.GetHeight() * Sprite.Scale.Y) * (index / 8)
+			X = (Width) * (index % 8),
+			Y = (Height) * (index / 8)
 		};
 	}
 

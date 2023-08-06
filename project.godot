@@ -15,6 +15,11 @@ run/main_scene="res://SquareBoard/square_board.tscn"
 config/features=PackedStringArray("4.1", "C#", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+
 [dotnet]
 
 project/assembly_name="Chessagon"
@@ -26,3 +31,4 @@ theme/custom_font="res://Resources/FiraCode-Regular.ttf"
 [rendering]
 
 renderer/rendering_method="mobile"
+anti_aliasing/quality/msaa_2d=3

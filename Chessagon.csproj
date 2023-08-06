@@ -9,10 +9,12 @@
     </Compile>
     <Compile Remove="Chessagon.Common\**" />
     <Compile Remove="Chessagon.Server\**" />
+    <Compile Remove="Tests\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Chessagon.Common\**" />
     <EmbeddedResource Remove="Chessagon.Server\**" />
+    <EmbeddedResource Remove="Tests\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Chessagon.Common\Chessagon.Common.csproj" />

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chessagon", "Chessagon.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chessagon.Common", "Chessagon.Common\Chessagon.Common.csproj", "{67212A99-3C0C-43DC-A73B-72CA428B62C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{BEA2AD77-8B14-4A26-A957-EF8783245E9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 	Debug|Any CPU = Debug|Any CPU
@@ -23,5 +25,11 @@ Global
 		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
 		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
 		{67212A99-3C0C-43DC-A73B-72CA428B62C2}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA2AD77-8B14-4A26-A957-EF8783245E9F}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
