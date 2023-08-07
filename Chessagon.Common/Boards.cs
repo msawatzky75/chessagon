@@ -12,6 +12,18 @@ public class PieceMoveEventArgs : EventArgs
 	}
 }
 
+public enum Directions
+{
+	NorthWest = -9,
+	North = -8,
+	NorthEast = -7,
+	East = 1,
+	SouthEast = 9,
+	South = 8,
+	SouthWest = 7,
+	West = -1,
+}
+
 public class ChessBoard
 {
 	public event EventHandler<PieceMoveEventArgs>? PieceMove;
@@ -19,7 +31,18 @@ public class ChessBoard
 	/// <summary>
 	/// Direction offsets starting northwest going clockwise
 	/// </summary>
-	private static readonly int[] DirectionOffsets = { -9, -8, -7, 1, 9, 8, 7, -1 };
+	private static readonly Directions[] DirectionOffsets =
+	{
+		Directions.NorthWest,
+		Directions.North,
+		Directions.NorthEast,
+		Directions.East,
+		Directions.SouthEast,
+		Directions.South,
+		Directions.SouthWest,
+		Directions.West,
+	};
+
 
 	private readonly Piece[] _pieces = new Piece[64];
 	private IEnumerable<int> _attacked;
@@ -83,7 +106,7 @@ public class ChessBoard
 
 		IEnumerable<Move> opponentMoves = new List<Move>();
 		if (!attacking)
-			opponentMoves = GetMoves(color: color.OppositeColor());
+			opponentMoves = GetMoves(color: colorFilter.OppositeColor(), attacking: true);
 
 		var moves = new List<Move>();
 		for (var i = 0; i < _pieces.Length; i++)
@@ -92,9 +115,7 @@ public class ChessBoard
 			if (!piece.HasColor(colorFilter)) continue;
 
 			if (piece.HasFlag(Piece.Pawn)) moves.AddRange(GeneratePawnMoves(piece, i, attacking));
-			else if (piece.HasFlag(Piece.Bishop)) moves.AddRange(GenerateSlidingMoves(piece, i, attacking));
-			else if (piece.HasFlag(Piece.Rook)) moves.AddRange(GenerateSlidingMoves(piece, i, attacking));
-			else if (piece.HasFlag(Piece.Queen)) moves.AddRange(GenerateSlidingMoves(piece, i, attacking));
+			else if (piece.IsSliding()) moves.AddRange(GenerateSlidingMoves(piece, i, attacking));
 			else if (piece.HasFlag(Piece.Knight)) moves.AddRange(GetKnightMoves(piece, i));
 			else if (piece.HasFlag(Piece.King)) moves.AddRange(GetKingMoves(piece, i));
 		}
@@ -118,16 +139,38 @@ public class ChessBoard
 
 		// or if the attacking piece is a sliding piece, move into it's attack vector.
 		var attackingSource = attackingKingMoves.DistinctBy(m => m.From).Select(m => m.From).ToList();
+
+		// if the king is attacked by more than one piece, blocking an attack is insufficient
 		if (attackingSource.Count > 1) return possibleMoves;
+		
+		var attackingPiece = attackingSource.First();
+		if (_pieces[attackingPiece].IsSliding())
 		{
-			var attackingPiece = attackingSource.First();
-			if (_pieces[attackingPiece].IsSliding())
+			var slidingAttackedIndexes = new List<int>();
+
+			// starts northeast and goes clockwise
+			foreach (int checkDirection in DirectionOffsets)
 			{
-				// determine sliding rank/file/diagonal that is attacking the king
-				// filter possible moves to include moves that block the sliding attack
-				List<Move> checkBlockingMoves;
+				var absDirection = Math.Abs(checkDirection);
+				// if the direction we're searching isn't in the direction of the attacking piece, continue
+				// don't search any direction more than 7 cells
+				if ((attackingPiece - myKing) % checkDirection != 0 || ((attackingPiece - myKing) / checkDirection) is < 0 or > 8) continue;
+
+				int j = 1;
+				do
+				{
+					slidingAttackedIndexes.Add(myKing + (checkDirection * j));
+					j++;
+				} while (myKing + (checkDirection * j) != attackingPiece && j < 8);
 			}
+
+			possibleMoves.AddRange(moves.Where(m => slidingAttackedIndexes.Contains(m.To)));
 		}
+
+
+		// determine sliding rank/file/diagonal that is attacking the king
+		// filter possible moves to include moves that block the sliding attack
+		List<Move> checkBlockingMoves;
 
 
 		if (!possibleMoves.Any() && !attacking) throw new Exception("Checkmate");
@@ -141,7 +184,7 @@ public class ChessBoard
 		for (int direction = 0; direction < 8; direction++)
 		{
 			if (NumSquaresToEdge(index)[direction] <= 0) continue;
-			var target = index + DirectionOffsets[direction];
+			var target = index + (int)DirectionOffsets[direction];
 
 			// don't attack friendlies
 			if (_pieces[target].HasColor(piece)) continue;
@@ -167,6 +210,7 @@ public class ChessBoard
 
 	private IEnumerable<Move> GenerateSlidingMoves(Piece piece, int index, bool attacking = false)
 	{
+		// offsets are {startDirection, numberOfDirectionsToSkip}
 		// queen
 		int[] offset = { 0, 1 };
 		if (piece.HasFlag(Piece.Bishop)) offset = new[] { 0, 2 };
@@ -179,19 +223,19 @@ public class ChessBoard
 			var blocked = 0;
 			for (int o = 0; o < NumSquaresToEdge(index)[direction]; o++)
 			{
-				var target = index + DirectionOffsets[direction] * (o + 1);
+				var target = index + (int)DirectionOffsets[direction] * (o + 1);
 
 				// don't attack friendlies
 				if (_pieces[target].HasColor(piece)) break;
 
 				moves.Add(new Move(index, target));
 
-				// we want attacking moves, so don't stop searching when finding an attackable piece
-				if (attacking && blocked < 1)
-				{
-					blocked++;
-					continue;
-				}
+				// we want all attacking moves where the king is in danger, so don't stop searching when finding an attackable piece
+				// if (attacking && blocked < 1)
+				// {
+				// 	blocked = 0;
+				// 	continue;
+				// }
 
 				// add the last move as an attack and stop adding moves on this slide
 				if (_pieces[target] != 0) break;
