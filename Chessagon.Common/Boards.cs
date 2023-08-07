@@ -125,7 +125,10 @@ public class ChessBoard
 			.Where(p => p.piece == (Piece.King | colorFilter))
 			.Select(p => p.index).FirstOrDefault(-1);
 
-		if (!_attacked.Contains(myKing)) return moves;
+		var attackingKingMoves = opponentMoves.Where(m => m.To == myKing).ToList();
+		
+		// if king is not under threat, return moves
+		if (!attackingKingMoves.Any()) return moves;
 
 		List<Move> possibleMoves = new List<Move>();
 
@@ -134,15 +137,16 @@ public class ChessBoard
 			// option to move the king to a cell that isn't attacked
 			.Where(m => (m.From == myKing && !_attacked.Contains(m.To))));
 
-		var attackingKingMoves = opponentMoves.Where(m => m.To == myKing).ToList();
 
+		if (attackingKingMoves.Count() != 1) return possibleMoves;
 
 		// or if the attacking piece is a sliding piece, move into it's attack vector.
 		var attackingSource = attackingKingMoves.DistinctBy(m => m.From).Select(m => m.From).ToList();
 
 		// if the king is attacked by more than one piece, blocking an attack is insufficient
 		if (attackingSource.Count > 1) return possibleMoves;
-		
+
+		// figure out what moves can be considered "blocking" moves
 		var attackingPiece = attackingSource.First();
 		if (_pieces[attackingPiece].IsSliding())
 		{
@@ -154,24 +158,20 @@ public class ChessBoard
 				var absDirection = Math.Abs(checkDirection);
 				// if the direction we're searching isn't in the direction of the attacking piece, continue
 				// don't search any direction more than 7 cells
-				if ((attackingPiece - myKing) % checkDirection != 0 || ((attackingPiece - myKing) / checkDirection) is < 0 or > 8) continue;
+				if ((attackingPiece - myKing) % checkDirection != 0 ||
+				    ((attackingPiece - myKing) / checkDirection) is < 0 or > 8) continue;
 
-				int j = 1;
-				do
+				for (int j = 1; myKing + (checkDirection * j) != attackingPiece && j < 8; j++)
 				{
 					slidingAttackedIndexes.Add(myKing + (checkDirection * j));
-					j++;
-				} while (myKing + (checkDirection * j) != attackingPiece && j < 8);
+				}
 			}
+
+			// attacking the sliding piece will also prevent check
+			slidingAttackedIndexes.Add(attackingPiece);
 
 			possibleMoves.AddRange(moves.Where(m => slidingAttackedIndexes.Contains(m.To)));
 		}
-
-
-		// determine sliding rank/file/diagonal that is attacking the king
-		// filter possible moves to include moves that block the sliding attack
-		List<Move> checkBlockingMoves;
-
 
 		if (!possibleMoves.Any() && !attacking) throw new Exception("Checkmate");
 		return possibleMoves;

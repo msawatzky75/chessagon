@@ -57,7 +57,8 @@ public partial class SquareBoard : Node2D
 		// ReSharper disable StringLiteralTypo
 		// _board = ChessBoard.FromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 		_board = ChessBoard.FromFen("rnbq1bnr/pp1kpppp/2p5/3p4/2QPP3/8/PPP2PPP/RNB1KBNR w KQkq - 0 1");
-		
+		_board = ChessBoard.FromFen("rnbq1bnr/p2kpp1p/2p5/1p1p2pP/2QPP3/8/PPP2PP1/RNB1KBNR b KQ g6 0 1");
+
 		// empty 
 		// _board = ChessBoard.FromFen("8/8/8/8/8/8/8/8 w KQkq - 0 1");
 
@@ -230,7 +231,7 @@ public partial class SquareBoard : Node2D
 			DrawString(
 				new SystemFont(),
 				(pos * size) + new Vector2(CellWidth, 0) + new Vector2(CellWidth / 2, CellWidth / 2) + offset,
-				pos.Y.ToString(),
+				(pos.Y + 1).ToString(),
 				modulate: Colors.Red
 			);
 		if (pos.Y == 7)
@@ -248,13 +249,13 @@ public partial class SquareBoard : Node2D
 		if (GetNode("../Information") is not Label infoLabel) return;
 
 		infoLabel.Position = (pos * size) + new Vector2(CellWidth, 0) +
-							 new Vector2(CellWidth / 2, CellWidth / 2) + offset;
+		                     new Vector2(CellWidth / 2, CellWidth / 2) + offset;
 
 		infoLabel.Text = $"WhiteToMove: {_board.WhiteToMove}\n" +
-						 $"Selected Cell: {SelectedCell}\n" +
-						 $"Highlighted Cells: {string.Join(", ", selectedPieceMoves)}\n" +
-						 $"Attacked Cells: {string.Join(", ", attackedCells)}\n" +
-						 $"FEN: {_board.ToFen()}";
+		                 $"Selected Cell: {SelectedCell}\n" +
+		                 $"Highlighted Cells: {string.Join(", ", selectedPieceMoves)}\n" +
+		                 $"Attacked Cells: {string.Join(", ", attackedCells)}\n" +
+		                 $"FEN: {_board.ToFen()}";
 	}
 
 	private static IEnumerable<Texture2D> LoadTextures()
