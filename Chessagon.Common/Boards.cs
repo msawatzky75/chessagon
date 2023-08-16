@@ -12,16 +12,22 @@ public class PieceMoveEventArgs : EventArgs
 	}
 }
 
-public enum Directions
+public enum Direction
 {
+	// Sum of North and West
 	NorthWest = -9,
 	North = -8,
+	// Sum of North and East
 	NorthEast = -7,
 	East = 1,
+	// Sum of South and East
 	SouthEast = 9,
 	South = 8,
+	// Sum of South and West
 	SouthWest = 7,
 	West = -1,
+
+	None = 0,
 }
 
 public class ChessBoard
@@ -31,16 +37,16 @@ public class ChessBoard
 	/// <summary>
 	/// Direction offsets starting northwest going clockwise
 	/// </summary>
-	private static readonly Directions[] DirectionOffsets =
+	private static readonly Direction[] DirectionOffsets =
 	{
-		Directions.NorthWest,
-		Directions.North,
-		Directions.NorthEast,
-		Directions.East,
-		Directions.SouthEast,
-		Directions.South,
-		Directions.SouthWest,
-		Directions.West,
+		Direction.NorthWest,
+		Direction.North,
+		Direction.NorthEast,
+		Direction.East,
+		Direction.SouthEast,
+		Direction.South,
+		Direction.SouthWest,
+		Direction.West,
 	};
 
 
@@ -115,7 +121,7 @@ public class ChessBoard
 			if (!piece.HasColor(colorFilter)) continue;
 
 			if (piece.HasFlag(Piece.Pawn)) moves.AddRange(GeneratePawnMoves(piece, i, attacking));
-			else if (piece.IsSliding()) moves.AddRange(GenerateSlidingMoves(piece, i, attacking));
+			else if (piece.IsSliding()) moves.AddRange(GenerateSlidingMoves(piece, i));
 			else if (piece.HasFlag(Piece.Knight)) moves.AddRange(GetKnightMoves(piece, i));
 			else if (piece.HasFlag(Piece.King)) moves.AddRange(GetKingMoves(piece, i));
 		}
@@ -126,7 +132,7 @@ public class ChessBoard
 			.Select(p => p.index).FirstOrDefault(-1);
 
 		var attackingKingMoves = opponentMoves.Where(m => m.To == myKing).ToList();
-		
+
 		// if king is not under threat, return moves
 		if (!attackingKingMoves.Any()) return moves;
 
@@ -143,6 +149,30 @@ public class ChessBoard
 		// or if the attacking piece is a sliding piece, move into it's attack vector.
 		var attackingSource = attackingKingMoves.DistinctBy(m => m.From).Select(m => m.From).ToList();
 
+		var attackingSlides = attackingSource.Where(s => _pieces[s].IsSliding()).ToList();
+
+		// don't retreat back along a slide
+		if (attackingSlides.Count > 0)
+		{
+			IEnumerable<Move> reducedPossibleMoves = possibleMoves;
+
+			List<int> attackingSlideIndexes = new List<int>();
+			foreach (var aS in attackingSlides)
+			{
+				var direction = GetDirectionTo(aS, myKing);
+
+				for (int i = 1; Math.Abs((int)direction * i) + aS < _pieces.Length; i++)
+				{
+					var next = aS + ((int)direction * i);
+					attackingSlideIndexes.Add(next);
+				}
+			}
+
+			possibleMoves = possibleMoves.ExceptBy(
+				attackingSlideIndexes, m => m.To
+			).ToList();
+		}
+
 		// if the king is attacked by more than one piece, blocking an attack is insufficient
 		if (attackingSource.Count > 1) return possibleMoves;
 
@@ -152,19 +182,12 @@ public class ChessBoard
 		{
 			var slidingAttackedIndexes = new List<int>();
 
-			// starts northeast and goes clockwise
-			foreach (int checkDirection in DirectionOffsets)
-			{
-				var absDirection = Math.Abs(checkDirection);
-				// if the direction we're searching isn't in the direction of the attacking piece, continue
-				// don't search any direction more than 7 cells
-				if ((attackingPiece - myKing) % checkDirection != 0 ||
-				    ((attackingPiece - myKing) / checkDirection) is < 0 or > 8) continue;
+			var direction = GetDirectionTo(myKing, attackingPiece);
+			if (direction is Direction.None) return possibleMoves;
 
-				for (int j = 1; myKing + (checkDirection * j) != attackingPiece && j < 8; j++)
-				{
-					slidingAttackedIndexes.Add(myKing + (checkDirection * j));
-				}
+			for (int j = 1; myKing + ((int)direction * j) != attackingPiece && j < 8; j++)
+			{
+				slidingAttackedIndexes.Add(myKing + ((int)direction) * j);
 			}
 
 			// attacking the sliding piece will also prevent check
@@ -175,6 +198,27 @@ public class ChessBoard
 
 		if (!possibleMoves.Any() && !attacking) throw new Exception("Checkmate");
 		return possibleMoves;
+	}
+
+	public static Direction GetDirectionTo(int source, int dest)
+	{
+		int sourceFile = GetFile(source);
+		int sourceRank = GetRank(source);
+		int destFile = GetFile(dest);
+		int destRank = GetRank(dest);
+
+		var vertical = sourceRank - destRank > 0 ? Direction.North : Direction.South;
+		var horizontal = sourceFile - destFile > 0 ? Direction.West : Direction.East;
+
+		if (sourceFile == destFile)
+			return vertical;
+		if (sourceRank == destRank)
+			return horizontal;
+		if (Math.Abs(sourceFile - destFile) == Math.Abs(sourceRank - destRank))
+			// Adding horizontal and vertical directions _does_ result in a valid angled direction
+			return (Direction)((int)vertical + (int)horizontal);
+
+		return Direction.None;
 	}
 
 	private IEnumerable<Move> GetKingMoves(Piece piece, int index)
@@ -208,7 +252,7 @@ public class ChessBoard
 			.Select(target => new Move(index, target));
 	}
 
-	private IEnumerable<Move> GenerateSlidingMoves(Piece piece, int index, bool attacking = false)
+	private IEnumerable<Move> GenerateSlidingMoves(Piece piece, int index)
 	{
 		// offsets are {startDirection, numberOfDirectionsToSkip}
 		// queen
